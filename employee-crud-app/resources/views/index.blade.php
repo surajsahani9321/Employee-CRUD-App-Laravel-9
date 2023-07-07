@@ -14,6 +14,9 @@
 	<div class="card-header">
 		<div class="row">
 			<div class="col col-md-6"><b>Employee Data</b></div>
+			<p>Type something in the input field to search the table for name, emails , departments, roles :</p>  
+			<input id="myInput" type="text" placeholder="Search..">
+			<br><br>
 			<div class="col col-md-6">
 				<a href="{{ route('employees.create') }}" class="btn btn-success btn-sm float-end">Add</a>
 			</div>
@@ -31,7 +34,7 @@
 				<th>Action</th>
 			</tr>
 			@if(count($data) > 0)
-
+<tbody id="myTable">
 				@foreach($data as $row)
 
 					<tr>
@@ -54,7 +57,7 @@
 					</tr>
 
 				@endforeach
-
+				</tbody>
 			@else
 				<tr>
 					<td colspan="5" class="text-center">No Data Found</td>
@@ -64,5 +67,15 @@
 		{!! $data->links() !!}
 	</div>
 </div>
-
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tr").filter(function() {
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    });
+  });
+});
+</script>
 @endsection

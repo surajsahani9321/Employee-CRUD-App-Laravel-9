@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Employee;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class EmployeeController extends Controller
 {
@@ -129,5 +130,30 @@ class EmployeeController extends Controller
     {
         $employee->delete();
         return redirect()->route('employees.index')->with('success','Employee data deleted successfully.');
+    }
+
+    public function showUploadForm()
+    {
+        return view('csv.upload');
+    }
+
+    public function upload(Request $request)
+    {
+        $request->validate([
+            'csv_file' => 'required|file|mimes:csv,txt,xlsx',
+        ]);
+
+        $path = $request->file('csv_file')->getRealPath();
+        $data = array_map('str_getcsv', file($path));
+
+        // Remove header row
+        $header = array_shift($data);
+
+        foreach ($data as $row) {
+            $record = array_combine($header, $row);
+            DB::table('employees')->insert($record);
+        }
+
+        return redirect()->back()->with('success', 'CSV data has been uploaded successfully.');
     }
 }
